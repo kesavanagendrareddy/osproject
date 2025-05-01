@@ -1,8 +1,0 @@
-This is a test file to verify the upload functionality of the Secure File System.
-
-It contains multiple lines of text to ensure proper file handling.
-We can use this to test:
-1. File upload
-2. File download
-3. File sharing
-4. File deletion
