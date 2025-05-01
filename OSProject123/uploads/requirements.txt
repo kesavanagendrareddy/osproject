@@ -1,0 +1,8 @@
+Flask
+google-generativeai
+Werkzeug
+PyPDF2
+python-docx
+fpdf
+python-dotenv
+email-validator

@@ -1,0 +1,89 @@
+body {
+    background: #f4f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.auth-container {
+    background: #fff;
+    max-width: 380px;
+    margin: 80px auto 0 auto;
+    padding: 36px 30px 28px 30px;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(30,60,114,0.12);
+    text-align: center;
+}
+.auth-container h2 {
+    color: #2a5298;
+    margin-bottom: 24px;
+    font-size: 2rem;
+}
+.auth-container label {
+    display: block;
+    text-align: left;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    color: #1e3c72;
+    font-size: 1.05rem;
+}
+.auth-container input[type="text"],
+.auth-container input[type="email"],
+.auth-container input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 7px;
+    border: 1px solid #c2d3e8;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    background: #f4f7fa;
+    transition: border 0.2s;
+}
+.auth-container input:focus {
+    border: 1.5px solid #2a5298;
+    outline: none;
+}
+.auth-container button {
+    margin-top: 18px;
+    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    border: none;
+    padding: 11px 0;
+    width: 100%;
+    border-radius: 7px;
+    font-size: 1.09rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.auth-container button:hover {
+    background: #1e3c72;
+}
+.auth-container p {
+    margin-top: 18px;
+    font-size: 1rem;
+}
+.auth-container a {
+    color: #2a5298;
+    text-decoration: underline;
+}
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+}
+.flashes li {
+    padding: 7px 0;
+    font-size: 1rem;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+.flashes .success {
+    background: #e7fbe7;
+    color: #267326;
+}
+.flashes .danger {
+    background: #fdeaea;
+    color: #d7263d;
+}
+.flashes .info {
+    background: #eaf3fd;
+    color: #1e3c72;
+}

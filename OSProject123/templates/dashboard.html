@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureFile</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --hover-color: #f8f9fa;
+            --border-color: #dadce0;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Google Sans', Arial, sans-serif;
+            background: #f8f9fa;
+            color: var(--text-primary);
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 256px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 64px;
+            bottom: 0;
+            width: 256px;
+            background: white;
+            border-right: 1px solid var(--border-color);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+
+        .upload-button {
+            height: 48px;
+            padding: 0 24px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .upload-button:hover {
+            background: #f8f9fa;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .upload-button .material-icons {
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        .nav-section {
+            margin-top: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px;
+            height: 40px;
+            border-radius: 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #f1f3f4;
+        }
+
+        .nav-item.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .nav-item.active .material-icons {
+            color: #fff;
+        }
+
+        .nav-item {
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .nav-item .material-icons {
+            font-size: 20px;
+            width: 20px;
+            color: var(--text-secondary);
+        }
+
+        .nav-item.active .material-icons {
+            color: var(--primary-color);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 256px;
+            padding: 24px;
+            padding-top: 88px;
+            position: relative;
+            width: calc(100% - 256px);
+            box-sizing: border-box;
+        }
+
+        /* Files Grid */
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 24px 0;
+        }
+
+        .files-grid.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .files-section {
+            width: 100%;
+            padding: 0 24px;
+            box-sizing: border-box;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .file-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.2s, transform 0.2s;
+            width: 240px;
+            height: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            min-width: 240px;
+            max-width: 240px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 6px 24px rgba(26,115,232,0.12);
+            transform: translateY(-4px) scale(1.03);
+        }
+
+        .list-view .file-card {
+            height: 48px;
+            flex-direction: row;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+            border: none;
+            border-radius: 0;
+            margin: 0;
+            background: white;
+        }
+
+        .file-preview {
+            width: 72px;
+            height: 72px;
+            background: #f1f3f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 28px auto 10px auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .list-view .file-preview {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: none;
+            background: none;
+            flex-shrink: 0;
+        }
+
+        .file-preview .material-icons {
+            font-size: 44px;
+            color: #4285f4;
+        }
+
+        .list-view .file-preview .material-icons {
+            font-size: 20px;
+        }
+
+        .file-info {
+            padding: 8px 10px 0 10px;
+            background: white;
+            width: 100%;
+            text-align: center;
+        }
+
+        .list-view .file-info {
+            flex: 1;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .file-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .list-view .file-name {
+            flex: 1;
+            margin: 0;
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .list-view .file-meta {
+            width: 100px;
+            justify-content: flex-start;
+        }
+
+        .file-actions {
+            display: none;
+        }
+
+        .file-actions-menu {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .menu-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            padding: 6px;
+            transition: background 0.2s;
+        }
+
+        .menu-button:hover {
+            background: #f1f3f4;
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            left: 50%;
+            bottom: 36px;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+            min-width: 140px;
+            z-index: 100;
+        }
+
+        .menu-dropdown button {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 10px 18px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #444;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .menu-dropdown button:hover {
+            background: #f8f9fa;
+        }
+
+        /* View Options */
+        .view-options {
+            display: flex;
+            gap: 4px;
+        }
+
+        .view-option {
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .view-option:hover {
+            background: var(--hover-color);
+        }
+
+        .view-option.active {
+            color: var(--primary-color);
+            background: #e8f0fe;
+        }
+
+        /* Floating Upload Button */
+        .floating-upload-button {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: white;
+            border: none;
+            border-radius: 28px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 100;
+            color: var(--text-primary);
+        }
+
+        .floating-upload-button:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background: #f8f9fa;
+        }
+
+        .floating-upload-button .material-icons {
+            color: var(--primary-color);
+        }
+
+        /* Drag over overlay */
+        .drag-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary-color);
+            pointer-events: none;
+        }
+
+        .drag-overlay.active {
+            display: flex;
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 16px 0 24px;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 240px;
+            padding-right: 24px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .brand-logo .material-icons {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 720px;
+            position: relative;
+            margin: 0 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 48px;
+            border: none;
+            border-radius: 8px;
+            background: #f1f3f4;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: background 0.2s;
+        }
+
+        .search-input:focus {
+            background: #e8eaed;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .keyboard-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 20px;
+            opacity: 0.7;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            padding-left: 24px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .profile-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .profile-button:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .logout-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #f1f3f4;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-button:hover {
+            background: #e8eaed;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="brand">
+            <a href="/" class="brand-logo">
+                <span class="material-icons">lock</span>
+                SecureFile
+            </a>
+        </div>
+        
+        <div class="search-bar">
+            <span class="material-icons search-icon">search</span>
+            <input type="text" class="search-input" placeholder="Search files..." id="searchInput">
+            <span class="material-icons keyboard-icon">keyboard</span>
+        </div>
+
+        <div class="header-actions">
+            <div class="user-profile">
+                <div class="profile-avatar" id="profileAvatar" style="width:48px;height:48px;background:#1a73e8;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7rem;cursor:pointer;position:relative;">
+                    K
+                </div>
+                <button class="logout-button">
+                    <span class="material-icons">logout</span>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile/Settings Modal -->
+    <div id="profileModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:3000;align-items:center;justify-content:center;">
+        <div style="background:white;padding:36px 32px;min-width:340px;max-width:90vw;border-radius:14px;box-shadow:0 8px 40px rgba(26,115,232,0.11);position:relative;">
+            <button onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute;right:18px;top:18px;background:none;border:none;cursor:pointer;font-size:22px;color:#888;">&times;</button>
+            <h2 style="text-align:center;color:#1a73e8;font-size:1.3rem;margin-bottom:18px;">Profile & Settings</h2>
+            <div style="text-align:center;margin-bottom:22px;">
+                <div class="profile-avatar-modal" style="width:64px;height:64px;background:#1a73e8;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:2.1rem;margin-bottom:8px;">K</div>
+                <div id="profileName" style="font-size:1.1rem;font-weight:500;">Your Name</div>
+                <div id="profileEmail" style="color:#888;font-size:0.97rem;">your.email@example.com</div>
+            </div>
+            <hr style="margin:18px 0 14px 0;">
+            <div style="margin-bottom:18px;">
+                <label style="font-weight:500;">Change Password</label><br>
+                <input type="password" id="currentPassword" placeholder="Current Password" style="width:100%;padding:7px 10px;margin:8px 0 6px 0;border-radius:6px;border:1px solid #dadce0;">
+                <input type="password" id="newPassword" placeholder="New Password" style="width:100%;padding:7px 10px;margin-bottom:10px;border-radius:6px;border:1px solid #dadce0;">
+                <button onclick="changePassword()" style="padding:8px 18px;background:#1a73e8;color:#fff;border:none;border-radius:6px;font-size:1rem;cursor:pointer;">Update Password</button>
+                <div id="passwordFeedback" style="margin-top:8px;font-size:0.98rem;color:#e74c3c;display:none;"></div>
+            </div>
+            <hr style="margin:14px 0;">
+            <div style="text-align:center;">
+                <button onclick="logout()" style="padding:8px 22px;background:#e74c3c;color:#fff;border:none;border-radius:6px;font-size:1rem;cursor:pointer;">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <button class="upload-button" onclick="document.getElementById('fileInput').click()">
+                <span class="material-icons">add</span>
+                New
+            </button>
+            <nav class="nav-section">
+                <a href="#" class="nav-item active" data-section="my">
+                    <span class="material-icons">folder</span>
+                    My Files
+                </a>
+                <a href="#" class="nav-item" data-section="recent">
+                    <span class="material-icons">access_time</span>
+                    Recent
+                </a>
+                <a href="#" class="nav-item" data-section="starred">
+                    <span class="material-icons">star</span>
+                    Starred
+                </a>
+                <a href="#" class="nav-item" data-section="trash">
+                    <span class="material-icons">delete</span>
+                    Trash
+                </a>
+                <a href="#" class="nav-item" data-section="share">
+                    <span class="material-icons">share</span>
+                    Share
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <input type="file" id="fileInput" style="display: none" multiple>
+            
+            <div class="files-section" id="myFilesSection">
+                <div class="section-header">
+                    <div class="section-title">My Files</div>
+                </div>
+                <div class="files-grid" id="filesList">
+                    <!-- Files will be populated here -->
+                </div>
+            </div>
+
+            <div class="files-section" id="recentSection" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">Recent</div>
+                </div>
+                <div class="files-grid" id="recentList">
+                    <!-- Recent files will be populated here -->
+                </div>
+            </div>
+
+            <div class="files-section" id="starredSection" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">Starred</div>
+                </div>
+                <div class="files-grid" id="starredList">
+                    <!-- Starred files will be populated here -->
+                </div>
+            </div>
+
+            <div class="files-section" id="trashSection" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">Trash</div>
+                </div>
+                <div class="files-grid" id="trashList">
+                    <!-- Trash files will be populated here -->
+                </div>
+            </div>
+
+            <div class="files-section" id="shareSection" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">Share</div>
+                </div>
+                <div class="files-grid" id="shareList">
+                    <!-- Share files will be populated here -->
+                </div>
+            </div>
+
+            <!-- Floating Upload Button -->
+            <button class="floating-upload-button" onclick="document.getElementById('fileInput').click()">
+                <span class="material-icons">upload_file</span>
+                Upload files
+            </button>
+        </main>
+    </div>
+
+    <!-- Drag Overlay -->
+    <div class="drag-overlay" id="dragOverlay">
+        <div style="text-align: center;">
+            <span class="material-icons" style="font-size: 64px;">cloud_upload</span>
+            <div>Drop files here</div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // File upload handling
+        const fileInput = document.getElementById('fileInput');
+        const dragOverlay = document.getElementById('dragOverlay');
+        const filesList = document.getElementById('filesList');
+        const starredList = document.getElementById('starredList');
+        const trashList = document.getElementById('trashList');
+        const toast = document.getElementById('toast');
+
+        // Show drag overlay when dragging files over the window
+        window.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragOverlay.classList.add('active');
+        });
+
+        window.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            if (e.relatedTarget === null) {
+                dragOverlay.classList.remove('active');
+            }
+        });
+
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragOverlay.classList.remove('active');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.style.opacity = '1';
+                }, 300);
+            }, 3000);
+        }
+
+        function handleFiles(files) {
+            Array.from(files).forEach(uploadFile);
+        }
+
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`${file.name} uploaded successfully`);
+                    loadFiles();
+                } else {
+                    showToast('Upload failed: ' + result.error);
+                }
+            } catch (error) {
+                showToast('Upload failed: ' + error.message);
+            }
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const iconMap = {
+                'pdf': 'picture_as_pdf',
+                'doc': 'description',
+                'docx': 'description',
+                'xls': 'table_chart',
+                'xlsx': 'table_chart',
+                'ppt': 'slideshow',
+                'pptx': 'slideshow',
+                'jpg': 'image',
+                'jpeg': 'image',
+                'png': 'image',
+                'gif': 'image',
+                'txt': 'text_snippet'
+            };
+            return iconMap[ext] || 'insert_drive_file';
+        }
+
+        // Exclude meta files from My Files section
+        function isMetaFile(name) {
+            return name === 'shared_files.txt' || name === 'share_links.txt' || name === 'starred_files.txt';
+        }
+
+        async function loadFiles() {
+            try {
+                console.log('Calling /files endpoint...');
+                const response = await fetch('/files');
+                const files = await response.json();
+                console.log('Files received:', files);
+                if (!Array.isArray(files) || files.filter(f => !isMetaFile(f.name)).length === 0) {
+                    filesList.innerHTML = `<div class="no-files-message" style="text-align:center;color:#888;padding:48px 0;">No files found. Try uploading one!</div>`;
+                    return;
+                }
+                filesList.innerHTML = files
+                    .filter(file => !isMetaFile(file.name))
+                    .map(file => `
+                        <div class="file-card">
+                            <div class="file-preview">
+                                <span class="material-icons">${getFileIcon(file.name)}</span>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-meta">${file.size} KB</div>
+                            </div>
+                            <div class="file-actions-menu">
+                                <button class="menu-button" onclick="toggleMenu(this)">
+                                    <span class="material-icons">more_horiz</span>
+                                </button>
+                                <div class="menu-dropdown">
+                                    <button onclick="previewFile('${file.id}')"><span class="material-icons">visibility</span> Preview</button>
+                                    <button onclick="window.location.href='/download/${file.id}'"><span class="material-icons">download</span> Download</button>
+                                    <button onclick="deleteFile('${file.id}')"><span class="material-icons">delete</span> Delete</button>
+                                    <button onclick="starFile('${file.id}')"><span class="material-icons">star</span> Starred</button>
+                                    <button onclick="showSharePopup('${file.id}')"><span class="material-icons">share</span> Share</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+            } catch (error) {
+                console.error('Error loading files:', error);
+                showToast('Error loading files');
+                filesList.innerHTML = `<div class="no-files-message" style="text-align:center;color:#e74c3c;padding:48px 0;">Error loading files. Check console for details.</div>`;
+            }
+        }
+
+        async function loadTrash() {
+            try {
+                const response = await fetch('/trash');
+                const files = await response.json();
+                if (!Array.isArray(files) || files.length === 0) {
+                    trashList.innerHTML = `<div class="no-files-message" style="text-align:center;color:#888;padding:48px 0;">Trash is empty.</div>`;
+                    return;
+                }
+                trashList.innerHTML = files.map(file => `
+                    <div class="file-card">
+                        <div class="file-preview">
+                            <span class="material-icons">${getFileIcon(file.name)}</span>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-meta">${file.size} KB</div>
+                        </div>
+                        <div class="file-actions-menu">
+                            <button class="menu-button" onclick="toggleMenu(this)">
+                                <span class="material-icons">more_horiz</span>
+                            </button>
+                            <div class="menu-dropdown">
+                                <button onclick="restoreFile('${file.id}')"><span class="material-icons">restore</span> Restore</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showToast('Error loading trash');
+                document.getElementById('trashList').innerHTML = `<div class="no-files-message" style="text-align:center;color:#e74c3c;padding:48px 0;">Error loading trash. Check console for details.</div>`;
+            }
+        }
+
+        async function loadStarred() {
+            try {
+                const response = await fetch('/starred');
+                const files = await response.json();
+                if (!Array.isArray(files) || files.length === 0) {
+                    starredList.innerHTML = `<div class="no-files-message" style="text-align:center;color:#888;padding:48px 0;">No starred files.</div>`;
+                    return;
+                }
+                starredList.innerHTML = files.map(file => `
+                    <div class="file-card">
+                        <div class="file-preview">
+                            <span class="material-icons">${getFileIcon(file.name)}</span>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-meta">${file.size} KB</div>
+                        </div>
+                        <div class="file-actions-menu">
+                            <button class="menu-button" onclick="toggleMenu(this)">
+                                <span class="material-icons">more_horiz</span>
+                            </button>
+                            <div class="menu-dropdown">
+                                <button onclick="previewFile('${file.id}')"><span class="material-icons">visibility</span> Preview</button>
+                                <button onclick="window.location.href='/download/${file.id}'"><span class="material-icons">download</span> Download</button>
+                                <button onclick="unstarFile('${file.id}')"><span class="material-icons">star_outline</span> Unstar</button>
+                                <button onclick="showSharePopup('${file.id}')"><span class="material-icons">share</span> Share</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showToast('Error loading starred files');
+                document.getElementById('starredList').innerHTML = `<div class="no-files-message" style="text-align:center;color:#e74c3c;padding:48px 0;">Error loading starred files. Check console for details.</div>`;
+            }
+        }
+
+        async function loadRecent() {
+            try {
+                const response = await fetch('/recent');
+                const files = await response.json();
+                const recentList = document.getElementById('recentList');
+                if (!Array.isArray(files) || files.length === 0) {
+                    recentList.innerHTML = `<div class='no-files-message' style='text-align:center;color:#888;padding:48px 0;'>No recent files.</div>`;
+                    return;
+                }
+                recentList.innerHTML = files.map(file => `
+                    <div class='file-card'>
+                        <div class='file-preview'>
+                            <span class='material-icons'>${getFileIcon(file.name)}</span>
+                        </div>
+                        <div class='file-info'>
+                            <div class='file-name'>${file.name}</div>
+                            <div class='file-meta'>${file.size} KB</div>
+                        </div>
+                        <div class='file-actions-menu'>
+                            <button class='menu-button' onclick='toggleMenu(this)'>
+                                <span class='material-icons'>more_horiz</span>
+                            </button>
+                            <div class='menu-dropdown'>
+                                <button onclick="previewFile('${file.id}')"><span class='material-icons'>visibility</span> Preview</button>
+                                <button onclick="downloadFile('${file.id}')"><span class='material-icons'>download</span> Download</button>
+                                <button onclick="deleteFile('${file.id}')"><span class='material-icons'>delete</span> Delete</button>
+                                <button onclick="starFile('${file.id}')"><span class='material-icons'>star</span> Starred</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showToast('Error loading recent files');
+                document.getElementById('recentList').innerHTML = `<div class='no-files-message' style='text-align:center;color:#e74c3c;padding:48px 0;'>Error loading recent files. Check console for details.</div>`;
+            }
+        }
+
+        async function loadShare() {
+            try {
+                const response = await fetch('/shared');
+                const files = await response.json();
+                const shareList = document.getElementById('shareList');
+                if (!Array.isArray(files) || files.length === 0) {
+                    shareList.innerHTML = `<div class='no-files-message' style='text-align:center;color:#888;padding:48px 0;'>No shared files.</div>`;
+                    return;
+                }
+                shareList.innerHTML = files.map(file => `
+                    <div class='file-card'>
+                        <div class='file-preview'>
+                            <span class='material-icons'>${getFileIcon(file.name)}</span>
+                        </div>
+                        <div class='file-info'>
+                            <div class='file-name'>${file.name}</div>
+                            <div class='file-meta'>${file.size} KB</div>
+                        </div>
+                        <div class='file-actions-menu'>
+                            <button class='menu-button' onclick='toggleMenu(this)'>
+                                <span class='material-icons'>more_horiz</span>
+                            </button>
+                            <div class='menu-dropdown'>
+                                <button onclick="previewFile('${file.id}')"><span class='material-icons'>visibility</span> Preview</button>
+                                <button onclick="downloadFile('${file.id}')"><span class='material-icons'>download</span> Download</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showToast('Error loading shared files');
+                document.getElementById('shareList').innerHTML = `<div class='no-files-message' style='text-align:center;color:#e74c3c;padding:48px 0;'>Error loading shared files. Check console for details.</div>`;
+            }
+        }
+
+        // Show file metadata modal on file card click
+        function showFileMetadata(fileId) {
+            fetch(`/file_metadata/${fileId}`)
+                .then(res => res.json())
+                .then(meta => {
+                    if (!meta.success) {
+                        showToast('Could not load metadata');
+                        return;
+                    }
+                    const modal = document.createElement('div');
+                    modal.className = 'modal';
+                    modal.style.position = 'fixed';
+                    modal.style.top = '0';
+                    modal.style.left = '0';
+                    modal.style.width = '100vw';
+                    modal.style.height = '100vh';
+                    modal.style.background = 'rgba(0,0,0,0.5)';
+                    modal.style.display = 'flex';
+                    modal.style.alignItems = 'center';
+                    modal.style.justifyContent = 'center';
+                    modal.style.zIndex = '3000';
+                    modal.innerHTML = `
+                        <div style="background:white;padding:36px 32px;min-width:320px;max-width:95vw;border-radius:14px;box-shadow:0 8px 40px rgba(26,115,232,0.11);position:relative;">
+                            <button onclick="this.closest('.modal').remove()" style="position:absolute;right:18px;top:18px;background:none;border:none;cursor:pointer;font-size:22px;color:#888;">&times;</button>
+                            <h2 style="color:#1a73e8;font-size:1.25rem;margin-bottom:18px;">File Metadata</h2>
+                            <div style="font-size:1.08rem;margin-bottom:8px;"><b>Name:</b> ${meta.name}</div>
+                            <div style="font-size:1.08rem;margin-bottom:8px;"><b>Size:</b> ${meta.size}</div>
+                            <div style="font-size:1.08rem;margin-bottom:8px;"><b>Created:</b> ${meta.created}</div>
+                            <div style="font-size:1.08rem;margin-bottom:8px;"><b>Modified:</b> ${meta.modified}</div>
+                            <div style="font-size:1.08rem;margin-bottom:8px;"><b>Owner:</b> ${meta.owner}</div>
+                            <div style="font-size:1.08rem;margin-bottom:8px;"><b>Permissions:</b> ${meta.permissions}</div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                });
+        }
+
+        // Attach click event to file cards after loading files
+        function attachFileCardListeners() {
+            document.querySelectorAll('.file-card').forEach(card => {
+                const fileId = card.querySelector('.file-name').textContent;
+                card.onclick = (e) => {
+                    // Prevent menu or button clicks from triggering metadata
+                    if(e.target.closest('.file-actions-menu') || e.target.closest('.menu-dropdown') || e.target.tagName === 'BUTTON') return;
+                    showFileMetadata(fileId);
+                };
+            });
+        }
+
+        // Call after rendering files
+        const origLoadFiles = loadFiles;
+        loadFiles = async function() {
+            await origLoadFiles.apply(this, arguments);
+            attachFileCardListeners();
+        };
+
+        async function previewFile(fileId) {
+            try {
+                const response = await fetch(`/preview/${fileId}`);
+                const content = await response.text();
+                const modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.background = 'rgba(0,0,0,0.5)';
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.zIndex = '1000';
+                modal.innerHTML = `
+                    <div style="background:white;width:90%;max-width:800px;max-height:90vh;border-radius:8px;overflow:auto;position:relative;">
+                        <button onclick="this.closest('.modal').remove()" style="position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;">
+                            <span class="material-icons">close</span>
+                        </button>
+                        <div style="padding:24px;">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+                modal.classList.add('modal');
+                document.body.appendChild(modal);
+            } catch (error) {
+                console.error('Error previewing file:', error);
+                showToast('Failed to preview file');
+            }
+        }
+
+        async function restoreFile(fileId) {
+            if (!confirm('Restore this file?')) return;
+            try {
+                const response = await fetch(`/restore/${fileId}`, { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('File restored');
+                    loadTrash();
+                    loadFiles();
+                } else {
+                    showToast('Restore failed: ' + result.error);
+                }
+            } catch (error) {
+                showToast('Restore failed: ' + error.message);
+            }
+        }
+
+        async function starFile(fileId) {
+            try {
+                const response = await fetch(`/star/${fileId}`, { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('File marked as starred');
+                    loadFiles();
+                } else {
+                    showToast('Star failed: ' + result.error);
+                }
+            } catch (error) {
+                showToast('Star failed: ' + error.message);
+            }
+        }
+
+        async function unstarFile(fileId) {
+            try {
+                const response = await fetch(`/unstar/${fileId}`, { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('File unstarred');
+                    loadStarred();
+                    loadFiles();
+                } else {
+                    showToast('Unstar failed: ' + result.error);
+                }
+            } catch (error) {
+                showToast('Unstar failed: ' + error.message);
+            }
+        }
+
+        async function showSharePopup(fileId) {
+            // Remove any existing share modal
+            const oldModal = document.getElementById('share-modal');
+            if (oldModal) oldModal.remove();
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'share-modal';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100vw';
+            modal.style.height = '100vh';
+            modal.style.background = 'rgba(0,0,0,0.5)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = '2000';
+            modal.innerHTML = `
+                <div style="background:white;padding:40px 32px;border-radius:16px;min-width:380px;max-width:96vw;box-shadow:0 8px 40px rgba(26,115,232,0.11);position:relative;animation:fadeIn .2s;">
+                    <button onclick=\"document.getElementById('share-modal').remove()\" style=\"position:absolute;right:18px;top:18px;background:none;border:none;cursor:pointer;font-size:22px;color:#888;transition:color .2s;\" onmouseover=\"this.style.color='#1a73e8'\" onmouseout=\"this.style.color='#888'\">&times;</button>
+                    <h2 style='margin-top:0;font-size:1.5rem;color:#1a73e8;text-align:center;'>Share File</h2>
+                    <div style='margin:22px 0 10px 0;text-align:center;'>
+                        <span class='material-icons' style='font-size:48px;color:#1a73e8;background:#e8f0fe;border-radius:50%;padding:12px;'>share</span>
+                    </div>
+                    <div style='margin:28px 0 18px 0;'>
+                        <label style='font-weight:600;font-size:1.08rem;'>Permission:</label>
+                        <select id='share-permission' style='margin-left:12px;padding:7px 14px;border-radius:7px;font-size:1rem;border:1px solid #dadce0;'>
+                          <option value='view'>View Only</option>
+                          <option value='view_download'>View & Download</option>
+                          <option value='download'>Download Only</option>
+                        </select>
+                    </div>
+                    <div style='margin:18px 0 12px 0;'>
+                        <label style='font-weight:600;font-size:1.08rem;'>Set 6-digit Secret Key:</label>
+                        <input id='share-secret-key' type='text' maxlength='6' pattern='[0-9]{6}' placeholder='Enter 6-digit key' style='margin-left:12px;padding:7px 14px;border-radius:7px;font-size:1rem;border:1px solid #dadce0;width:130px;text-align:center;letter-spacing:0.2em;' />
+                    </div>
+                    <div style='margin:24px 0 10px 0;'>
+                        <button id='generate-link-btn' style='padding:10px 28px;background:#1a73e8;color:#fff;border:none;border-radius:7px;font-size:1.08rem;cursor:pointer;box-shadow:0 2px 8px #1a73e82c;transition:background .18s;'>Generate Link</button>
+                    </div>
+                    <div id='share-link-area' style='margin:24px 0 0 0;display:none;text-align:center;'>
+                        <label style='font-weight:600;font-size:1.08rem;'>Shareable Link:</label>
+                        <input id='share-link-input' type='text' readonly style='width:90%;padding:8px 10px;margin:10px 0 0 0;border-radius:6px;border:1px solid #ccc;font-size:1.05rem;text-align:center;letter-spacing:.01em;' />
+                        <button onclick='navigator.clipboard.writeText(document.getElementById("share-link-input").value);this.innerText="Copied!";setTimeout(()=>this.innerText="Copy",1200);' style='margin-left:8px;padding:6px 18px;font-size:1rem;border-radius:5px;border:none;background:#f1f3f4;color:#1a73e8;cursor:pointer;transition:background .17s;'>Copy</button>
+                        <div id='share-link-feedback' style='margin-top:10px;color:#34a853;font-size:0.98rem;display:none;'>Link copied!</div>
+                    </div>
+                    <div style='margin-top:28px;text-align:center;color:#888;font-size:0.93rem;'>Anyone with the link and the 6-digit key can access the file with the selected permission.</div>
+                </div>
+                <style>@keyframes fadeIn{from{opacity:0;transform:scale(0.98);}to{opacity:1;transform:scale(1);}}</style>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('generate-link-btn').onclick = async function() {
+                const perm = document.getElementById('share-permission').value;
+                const secret = document.getElementById('share-secret-key').value;
+                if (!/^[0-9]{6}$/.test(secret)) {
+                    alert('Please enter a valid 6-digit key.');
+                    return;
+                }
+                const resp = await fetch(`/generate_share_link/${fileId}`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({permission:perm, secret_key:secret})});
+                const data = await resp.json();
+                if(data.success) {
+                    const link = data.link;
+                    document.getElementById('share-link-input').value = link;
+                    document.getElementById('share-link-area').style.display = '';
+                } else {
+                    alert('Failed to generate link');
+                }
+            }
+        }
+
+        // Dropdown menu logic
+        function toggleMenu(btn) {
+            const dropdown = btn.nextElementSibling;
+            document.querySelectorAll('.menu-dropdown').forEach(menu => {
+                if (menu !== dropdown) menu.style.display = 'none';
+            });
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.file-actions-menu')) {
+                document.querySelectorAll('.menu-dropdown').forEach(menu => menu.style.display = 'none');
+            }
+        });
+
+        // File delete logic
+        async function deleteFile(fileId) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+            try {
+                const response = await fetch(`/delete/${fileId}`, { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('File moved to Trash');
+                    loadFiles();
+                } else {
+                    showToast('Delete failed: ' + result.error);
+                }
+            } catch (error) {
+                showToast('Delete failed: ' + error.message);
+            }
+        }
+
+        // Dummy share logic
+        function shareFile(fileId) {
+            showToast('Share functionality coming soon!');
+        }
+
+        // View toggle functionality
+        const viewOptions = document.querySelectorAll('.view-option');
+        const filesGrid = document.getElementById('filesList');
+        
+        viewOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                viewOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                if (option.title.toLowerCase().includes('list')) {
+                    filesGrid.classList.add('list-view');
+                } else {
+                    filesGrid.classList.remove('list-view');
+                }
+            });
+        });
+
+        // Navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = {
+            my: document.getElementById('myFilesSection'),
+            recent: document.getElementById('recentSection'),
+            starred: document.getElementById('starredSection'),
+            trash: document.getElementById('trashSection'),
+            share: document.getElementById('shareSection')
+        };
+
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const section = this.getAttribute('data-section');
+                Object.values(sections).forEach(sec => sec.style.display = 'none');
+                if (section === 'recent') loadRecent();
+                if (section === 'starred') loadStarred();
+                if (section === 'trash') loadTrash();
+                if (section === 'share') loadShare();
+                // Show the selected section
+                if (sections[section]) sections[section].style.display = '';
+            });
+        });
+
+        // Show My Files by default
+        if (sections.my) sections.my.style.display = '';
+        else if (sections.recent) sections.recent.style.display = '';
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const files = document.querySelectorAll('.file-card');
+            
+            files.forEach(file => {
+                const fileName = file.querySelector('.file-name').textContent.toLowerCase();
+                if (fileName.includes(searchTerm)) {
+                    file.style.display = '';
+                } else {
+                    file.style.display = 'none';
+                }
+            });
+        });
+
+        // Initial load of files
+        loadFiles();
+
+        // Fetch and display user info in profile modal
+        async function loadUserInfo() {
+            const resp = await fetch('/user_info');
+            const data = await resp.json();
+            if (data.success) {
+                // Avatar initial
+                document.querySelectorAll('.profile-avatar, .profile-avatar-modal').forEach(el => {
+                    el.textContent = (data.username || 'U')[0].toUpperCase();
+                });
+                // Name and email
+                document.getElementById('profileName').innerText = data.username;
+                document.getElementById('profileEmail').innerText = data.email;
+            }
+        }
+
+        // Call on modal open
+        const profileAvatar = document.getElementById('profileAvatar');
+        profileAvatar.addEventListener('click', function() {
+            loadUserInfo();
+            document.getElementById('profileModal').style.display = 'flex';
+        });
+
+        // Change password logic
+        async function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newpw = document.getElementById('newPassword').value;
+            const feedback = document.getElementById('passwordFeedback');
+            feedback.style.display = 'none';
+            if (!current || !newpw) {
+                feedback.innerText = 'Fill both fields.';
+                feedback.style.display = '';
+                return;
+            }
+            const resp = await fetch('/change_password', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current_password:current,new_password:newpw})});
+            const data = await resp.json();
+            if (data.success) {
+                feedback.innerText = 'Password updated!';
+                feedback.style.color = '#34a853';
+            } else {
+                feedback.innerText = data.error || 'Failed to update password.';
+                feedback.style.color = '#e74c3c';
+            }
+            feedback.style.display = '';
+        }
+        // Logout logic
+        function logout() {
+            window.location.href = '/logout';
+        }
+    </script>
+</body>
+</html>

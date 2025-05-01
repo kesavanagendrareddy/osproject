@@ -1,0 +1,164 @@
+{% raw %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure File Management System</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Enhanced Fixed Header -->
+    <header class="fixed-header enhanced-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="logo" class="logo-img">
+                SecureFile
+            </div>
+            <nav class="header-nav">
+                <a href="#how-it-works">How it Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Testimonials</a>
+            </nav>
+            <div class="header-auth-buttons">
+                <button onclick="window.location.href='/signin'">Sign In</button>
+                <button onclick="window.location.href='/signup'">Sign Up</button>
+            </div>
+        </div>
+    </header>
+    <!-- Hero Section: Split layout -->
+    <section class="hero-split no-bg">
+        <div class="hero-left">
+            <h1>Secure File Management System</h1>
+            <p>Experience the next generation of secure, simple, and smart file management. Protect your data with robust encryption, advanced authentication, and seamless sharing.</p>
+        </div>
+        <div class="hero-right">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80" alt="Secure files" />
+        </div>
+    </section>
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How Our Website Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <span class="step-icon">1️⃣</span>
+                    <h3>Sign Up</h3>
+                    <p>Create your secure account with two-factor authentication.</p>
+                </div>
+                <div class="step">
+                    <span class="step-icon">2️⃣</span>
+                    <h3>Upload & Organize</h3>
+                    <p>Upload your files and organize them in folders, all encrypted.</p>
+                </div>
+                <div class="step">
+                    <span class="step-icon">3️⃣</span>
+                    <h3>Share Securely</h3>
+                    <p>Share files with others using access controls and permissions.</p>
+                </div>
+                <div class="step">
+                    <span class="step-icon">4️⃣</span>
+                    <h3>Monitor & Manage</h3>
+                    <p>Track file activity and receive real-time security alerts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Pricing</h2>
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Free</h3>
+                    <p class="price">₹0/month</p>
+                    <ul>
+                        <li>1 GB Storage</li>
+                        <li>Basic Security</li>
+                        <li>Email Support</li>
+                    </ul>
+                    <button>Get Started</button>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Pro</h3>
+                    <p class="price">₹199/month</p>
+                    <ul>
+                        <li>100 GB Storage</li>
+                        <li>Advanced Security</li>
+                        <li>Priority Support</li>
+                        <li>File Sharing</li>
+                    </ul>
+                    <button>Choose Pro</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <p class="price">Contact Us</p>
+                    <ul>
+                        <li>Unlimited Storage</li>
+                        <li>Custom Security</li>
+                        <li>Dedicated Support</li>
+                        <li>Custom Integrations</li>
+                    </ul>
+                    <button>Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-cards">
+                <div class="testimonial-card">
+                    <p>"The best file management system I've ever used! Super secure and easy to use."</p>
+                    <span>- Priya, Student</span>
+                </div>
+                <div class="testimonial-card">
+                    <p>"I love the sharing features and peace of mind knowing my files are protected."</p>
+                    <span>- Arjun, Developer</span>
+                </div>
+                <div class="testimonial-card">
+                    <p>"Excellent support and robust security. Highly recommended for teams!"</p>
+                    <span>- Kavya, Team Lead</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Success Toast Popup -->
+    <div id="success-toast" class="toast-success">Signed in successfully!</div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="logo" class="footer-logo-img">
+                SecureFile
+            </div>
+            <div class="footer-links">
+                <a href="#how-it-works">How it Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="mailto:support@securefiles.com">Contact</a>
+            </div>
+            <div class="footer-copy">
+                &copy; 2025 SecureFile. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    <script>
+    // Show toast if redirected from 2FA
+    (function() {
+        if (window.location.hash === '#signedin') {
+            const toast = document.getElementById('success-toast');
+            if (toast) {
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.opacity = 1; }, 50);
+                setTimeout(() => { toast.style.opacity = 0; }, 2200);
+                setTimeout(() => { toast.style.display = 'none'; }, 2600);
+            }
+        }
+    })();
+    </script>
+    <script src="/static/main.js"></script>
+</body>
+</html>
+{% endraw %}

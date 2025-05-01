@@ -1,0 +1,149 @@
+/* 2FA Page Modern Styles */
+.twofa-bg {
+    background-color: #f9f9f9;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.twofa-main-card {
+    background-color: #fff;
+    padding: 28px 18px 22px 18px;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(30,60,114,0.14);
+    width: 340px;
+    max-width: 96vw;
+}
+.twofa-header {
+    text-align: center;
+    margin-bottom: 18px;
+}
+.twofa-lock-icon {
+    margin: 0 auto 10px auto;
+}
+.twofa-lock-icon svg {
+    display: block;
+    margin: 0 auto;
+}
+.twofa-header h1 {
+    font-size: 1.35rem;
+    color: #2a5298;
+    margin-bottom: 7px;
+    font-weight: 700;
+}
+.twofa-sub {
+    font-size: 1.01rem;
+    color: #666;
+    margin-bottom: 0;
+}
+.twofa-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 7px;
+}
+.twofa-digit {
+    width: 36px;
+    height: 40px;
+    font-size: 1.3rem;
+    text-align: center;
+    border: 1.5px solid #c2d3e8;
+    border-radius: 6px;
+    background: #f4f7fa;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.twofa-digit:focus {
+    border: 1.5px solid #2a5298;
+    outline: none;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(30,60,114,0.09);
+}
+.twofa-timer-bar {
+    margin-bottom: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.twofa-timer-bar svg {
+    flex: 1 1 auto;
+    height: 8px;
+    border-radius: 4px;
+    background: #e3e9fc;
+}
+#timer-bar-fill {
+    height: 8px;
+    border-radius: 4px;
+    transition: width 1s linear;
+}
+#timer-label {
+    font-size: 1.01rem;
+    color: #d7263d;
+    font-weight: 700;
+    min-width: 36px;
+    text-align: right;
+}
+.twofa-error {
+    color: #d7263d;
+    font-size: 0.99rem;
+    margin-bottom: 10px;
+    background: #fdeaea;
+    border-radius: 5px;
+    padding: 7px 0;
+    text-align: center;
+    animation: shake 0.3s;
+}
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+.twofa-expired {
+    color: #d7263d;
+    font-size: 0.99rem;
+    margin-top: 14px;
+    text-align: center;
+}
+.twofa-expired a {
+    color: #2a5298;
+    text-decoration: underline;
+}
+.twofa-demo-info {
+    font-size: 0.98rem;
+    color: #267326;
+    margin-top: 8px;
+    margin-bottom: 0;
+    text-align: center;
+}
+#verify-btn {
+    width: 100%;
+    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    border: none;
+    padding: 10px 0;
+    border-radius: 7px;
+    font-size: 1.01rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 0;
+}
+#verify-btn:hover {
+    background: #1e3c72;
+}
+@media (max-width: 500px) {
+    .twofa-main-card {
+        padding: 10px 2vw;
+        width: 99vw;
+        max-width: 99vw;
+    }
+    .twofa-inputs {
+        gap: 4px;
+    }
+    .twofa-digit {
+        width: 30px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+}

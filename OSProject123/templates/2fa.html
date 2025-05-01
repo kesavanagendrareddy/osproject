@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification - SecureFile</title>
+    <link rel="stylesheet" href="/static/2fa.css">
+    <style>
+        .twofa-bg {
+            background-color: #f9f9f9;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .twofa-main-card {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(30,60,114,0.12);
+            width: 400px;
+        }
+        .twofa-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .twofa-lock-icon {
+            margin: 0 auto 10px auto;
+        }
+        .twofa-lock-icon svg {
+            fill: #2a5298;
+        }
+        .twofa-sub {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .twofa-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .twofa-digit {
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 1px solid #c2d3e8;
+            border-radius: 5px;
+        }
+        .twofa-digit:focus {
+            border: 1px solid #2a5298;
+            outline: none;
+        }
+        .twofa-timer-bar {
+            margin-bottom: 20px;
+        }
+        .twofa-timer-bar svg {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+        }
+        .twofa-timer-bar #timer-bar-fill {
+            width: 100%;
+            transition: width 1s;
+        }
+        .twofa-error {
+            color: #d7263d;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .twofa-expired {
+            color: #d7263d;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .twofa-expired a {
+            color: #2a5298;
+            text-decoration: none;
+        }
+        .twofa-demo-info {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="twofa-bg">
+        <div class="twofa-main-card">
+            <div class="twofa-header">
+                <div class="twofa-lock-icon">
+                    <svg width="42" height="42" viewBox="0 0 48 48" fill="none"><rect x="10" y="20" width="28" height="18" rx="6" fill="#e3e9fc"/><rect x="18" y="12" width="12" height="16" rx="6" fill="#2a5298"/><circle cx="24" cy="29" r="2.5" fill="#fff"/><rect x="22.3" y="29" width="3.4" height="6" rx="1.7" fill="#2a5298"/></svg>
+                </div>
+                <h1>Verify Your Identity</h1>
+                <p class="twofa-sub">Enter the 6-digit authentication code below</p>
+            </div>
+            <form method="post" id="twofa-form" autocomplete="off">
+                <div class="twofa-inputs">
+                    <input class="twofa-digit" type="text" maxlength="1" inputmode="numeric" pattern="\d" required>
+                    <input class="twofa-digit" type="text" maxlength="1" inputmode="numeric" pattern="\d" required>
+                    <input class="twofa-digit" type="text" maxlength="1" inputmode="numeric" pattern="\d" required>
+                    <input class="twofa-digit" type="text" maxlength="1" inputmode="numeric" pattern="\d" required>
+                    <input class="twofa-digit" type="text" maxlength="1" inputmode="numeric" pattern="\d" required>
+                    <input class="twofa-digit" type="text" maxlength="1" inputmode="numeric" pattern="\d" required>
+                    <input type="hidden" id="code" name="code">
+                </div>
+                <div class="twofa-timer-bar">
+                    <svg width="100%" height="8"><rect x="0" y="0" width="100%" height="8" rx="4" fill="#e3e9fc"/><rect id="timer-bar-fill" x="0" y="0" width="100%" height="8" rx="4" fill="#2a5298"/></svg>
+                    <span id="timer-label">15s</span>
+                </div>
+                {% if error %}
+                    <div class="twofa-error">{{ error }}</div>
+                {% endif %}
+                <button type="submit" id="verify-btn">Verify &rarr;</button>
+            </form>
+            <div class="twofa-demo-info">For demo: <b>123456</b></div>
+            <div id="expired-message" class="twofa-expired" style="display:none;">Code expired. <a href="/signin">Login again</a>.</div>
+        </div>
+    </div>
+    <script src="/static/2fa.js"></script>
+</body>
+</html>
